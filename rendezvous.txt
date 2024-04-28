@@ -1,0 +1,77 @@
+function scheduleMeeting($meetingDateTime) {
+        global $date, $fullname, $email, $device, $other, $devicename, $devicemodel, $specifications, $issues, $picture, $code;
+
+    
+        try {
+            include("connexionvb.php");
+    
+            // Check if the meeting date is within the allowed range (not less than the current date and not more than three months)
+            $currentDate = date("Y-m-d H:i:s");
+            $threeMonthsLater = date("Y-m-d H:i:s", strtotime("+3 months"));
+    
+            if ($meetingDateTime < $currentDate || $meetingDateTime > $threeMonthsLater) {
+                echo "Invalid meeting date and time.";
+                return;
+            }
+    
+            // Check if there are already two meetings scheduled for the selected date
+            $meetingDate = date("Y-m-d", strtotime($meetingDateTime));
+            $sql = "SELECT COUNT(*) AS meeting_count FROM repair WHERE DATE(meeting_count) = :meetingDate";
+            $stmt = $db->prepare($sql);
+            $stmt->bindValue(':meetingDate', $meetingDate);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($result['meeting_count'] > 0) {
+                echo "Meeting date and time already scheduled.";
+                return;
+            }
+    
+            if ($result['meeting_count'] >= 2) {
+                echo "Maximum number of meetings reached for the selected date.";
+                return;
+            }
+            if ($code === null) {
+                $code = generateCode();
+            }
+            // Update the existing code to include the meeting_datetime column in the INSERT query
+            $sql = "INSERT INTO repair (date, fullname, email, device, other, devicename, devicemodel, specification, issues, pictures, code, meeting_count) VALUES (:date, :fullname, :email, :device, :other, :devicename, :devicemodel, :specifications, :issues, :picture, :code, :meetingDateTime)";
+            $sql = $db->prepare($sql);
+            // ... bind the other form values ...
+            $sql->bindvalue(':meetingDateTime', $meetingDateTime);
+            // ... execute the query ...
+            $sql->bindvalue(':date', $date);
+            $sql->bindvalue(':fullname', $fullname);
+            $sql->bindvalue(':email', $email);
+            $sql->bindvalue(':device', $device);
+            $sql->bindvalue(':other', $other);
+            $sql->bindvalue(':devicename', $devicename);
+            $sql->bindvalue(':devicemodel', $devicemodel);
+            $sql->bindvalue(':specifications', $specifications);
+            $sql->bindvalue(':issues', $issues);
+            $sql->bindvalue(':picture', $picture);
+            $sql->bindvalue(':code', $code); 
+            $sql->execute();
+            if ($sql) {
+                echo "FORM SUBMITTED";
+            }else{
+                echo "error me";
+            }
+            // Rest of the code remains the same
+            // ...
+        } catch (Exception $e) {
+            die('Error:' . $e->getMessage());
+        }
+    }
+
+
+if (isset($_POST['meeting'])) {
+            $meetingDateTime = $_POST['meeting'];
+            scheduleMeeting($meetingDateTime);
+        }
+<label for="picture">Upload Picture:</label>
+    <input type="file" id="picture" name="picture" accept="image/*"><br><br>
+if (isset($_FILES['picture'])) {
+        $picture = $_FILES['picture']['name'];
+        $picture_tmp = $_FILES['picture']['tmp_name'];
+        move_uploaded_file($picture_tmp, "uploads/" . $picture);
+    }
