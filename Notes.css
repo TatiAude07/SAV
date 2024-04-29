@@ -4,6 +4,7 @@ body {
     background-color: #f5f5f5;
     margin: 0;
     padding: 20px;
+    color:red;
 }
 
 h1 {
@@ -12,7 +13,10 @@ h1 {
     margin-bottom: 20px;
     text-transform: uppercase;
 }
-
+form{
+    background-color:blue;
+    padding:4px;
+}
 table {
     width: 100%;
     border-collapse: collapse;

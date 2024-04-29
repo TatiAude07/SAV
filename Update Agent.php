@@ -61,6 +61,7 @@ $agents = $db->query($query)->fetchAll(PDO::FETCH_ASSOC);
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
+            margin-top: 50px;
         }
 
         th {
@@ -88,14 +89,14 @@ $agents = $db->query($query)->fetchAll(PDO::FETCH_ASSOC);
     <table>
         <tr>
             <th>ID Agent</th>
-            <th>Nom Agent</th>
+       
             <th>Prénom Agent</th>
             <th>Supprimer</th>
         </tr>
         <?php foreach ($agents as $agent) : ?>
             <tr>
                 <td><?php echo $agent['id_agent']; ?></td>
-                <td><?php echo $agent['nom_agent']; ?></td>
+            
                 <td><?php echo $agent['prenom_agent']; ?></td>
                 <td><a href="?supprimer=<?php echo $agent['id_agent']; ?>" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet agent ?')">Supprimer</a></td>
             </tr>
